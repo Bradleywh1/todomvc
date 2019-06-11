@@ -4,10 +4,11 @@
 	"description": "Demo for TodoMVC jQuery",
 	"main": "server.js",
 	"scripts": {
-		"start": "node server.js"
+		"start": "nodemon server.js"
 	},
 	"dependencies": {
-		"express": "^4.12.4"
+		"express": "^4.12.4",
+		"nodemon": "^1.19.1"
 	},
 	"engines": {
 		"node": "4.4.5"
