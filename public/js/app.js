@@ -57,7 +57,7 @@ jQuery(function ($) {
 			$('#toggle-all').on('change', toggleAll.bind(this));
 			$('#footer').on('click', '#clear-completed', this.destroyCompleted.bind(this));
 			$('#todo-list')
-				.on('change', '.toggle', this.toggle.bind(this))
+				.on('change', '.toggle', toggle.bind(this))
 				.on('dblclick', 'label', this.edit.bind(this))
 				.on('keyup', '.edit', this.editKeyup.bind(this))
 				.on('focusout', '.edit', this.update.bind(this))
@@ -141,11 +141,6 @@ jQuery(function ($) {
 
 			this.render();
 		},
-		toggle: function (e) {
-			var i = this.indexFromEl(e.target);
-			this.todos[i].completed = !this.todos[i].completed;
-			this.render();
-		},
 		edit: function (e) {
 			var $input = $(e.target).closest('li').addClass('editing').find('.edit');
 			$input.val($input.val()).focus();
@@ -182,6 +177,12 @@ jQuery(function ($) {
 			this.render();
 		}
 	};
+
+	function toggle(e) {
+		var i = App.indexFromEl(e.target);
+		App.todos[i].completed = !App.todos[i].completed;
+		App.render();
+	}
 
 	function toggleAll(e) {
 		var isChecked = $(e.target).prop('checked');
