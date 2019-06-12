@@ -55,7 +55,7 @@ jQuery(function ($) {
 		bindEvents: function () {
 			$('#new-todo').on('keyup', create.bind(this));
 			$('#toggle-all').on('change', toggleAll.bind(this));
-			$('#footer').on('click', '#clear-completed', this.destroyCompleted.bind(this));
+			$('#footer').on('click', '#clear-completed', destroyCompleted.bind(this));
 			$('#todo-list')
 				.on('change', '.toggle', toggle.bind(this))
 				.on('dblclick', 'label', edit.bind(this))
@@ -104,29 +104,11 @@ jQuery(function ($) {
 			}
 
 			return this.todos;
-		},
-		destroyCompleted: function () {
-			this.todos = this.getActiveTodos();
-			this.filter = 'all';
-			this.render();
-		},
-		// accepts an element from inside the `.item` div and
-		// returns the corresponding index in the `todos` array
-		indexFromEl: function (el) {
-			var id = $(el).closest('li').data('id');
-			var todos = this.todos;
-			var i = todos.length;
-
-			while (i--) {
-				if (todos[i].id === id) {
-					return i;
-				}
-			}
 		}
 	};
 
 	function toggle(e) {
-		var i = App.indexFromEl(e.target);
+		var i = indexFromEl(e.target);
 		App.todos[i].completed = !App.todos[i].completed;
 		App.render();
 	}
@@ -142,7 +124,7 @@ jQuery(function ($) {
 	}
 
 	function destroy(e) {
-		App.todos.splice(App.indexFromEl(e.target), 1);
+		App.todos.splice(indexFromEl(e.target), 1);
 		App.render();
 	}
 
@@ -178,7 +160,7 @@ jQuery(function ($) {
 		if ($el.data('abort')) {
 			$el.data('abort', false);
 		} else {
-			App.todos[App.indexFromEl(el)].title = val;
+			App.todos[indexFromEl(el)].title = val;
 		}
 		App.render();
 	}
@@ -196,6 +178,26 @@ jQuery(function ($) {
 			if (e.which === ESCAPE_KEY) {
 				$(e.target).data('abort', true).blur();
 			}
+		}
+
+			// accepts an element from inside the `.item` div and
+		// returns the corresponding index in the `todos` array
+		function indexFromEl(el) {
+			var id = $(el).closest('li').data('id');
+			var todos = App.todos;
+			var i = todos.length;
+
+			while (i--) {
+				if (todos[i].id === id) {
+					return i;
+				}
+			}
+		}
+
+		function destroyCompleted() {
+			App.todos = App.getActiveTodos();
+			App.filter = 'all';
+			App.render();
 		}
 
 	App.init();
