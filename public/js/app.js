@@ -53,7 +53,7 @@ jQuery(function ($) {
 			}).init('/all');      
 		},
 		bindEvents: function () {
-			$('#new-todo').on('keyup', this.create.bind(this));
+			$('#new-todo').on('keyup', create.bind(this));
 			$('#toggle-all').on('change', toggleAll.bind(this));
 			$('#footer').on('click', '#clear-completed', this.destroyCompleted.bind(this));
 			$('#todo-list')
@@ -61,7 +61,7 @@ jQuery(function ($) {
 				.on('dblclick', 'label', this.edit.bind(this))
 				.on('keyup', '.edit', this.editKeyup.bind(this))
 				.on('focusout', '.edit', this.update.bind(this))
-				.on('click', '.destroy', this.destroy.bind(this));
+				.on('click', '.destroy', destroy.bind(this));
 		},
 		render: function () {
 			var todos = this.getFilteredTodos();
@@ -123,24 +123,6 @@ jQuery(function ($) {
 				}
 			}
 		},
-		create: function (e) {
-			var $input = $(e.target);
-			var val = $input.val().trim();
-
-			if (e.which !== ENTER_KEY || !val) {
-				return;
-			}
-
-			this.todos.push({
-				id: util.uuid(),
-				title: val,
-				completed: false
-			});
-
-			$input.val('');
-
-			this.render();
-		},
 		edit: function (e) {
 			var $input = $(e.target).closest('li').addClass('editing').find('.edit');
 			$input.val($input.val()).focus();
@@ -160,7 +142,7 @@ jQuery(function ($) {
 			var val = $el.val().trim();
 
 			if (!val) {
-				this.destroy(e);
+				destroy(e);
 				return;
 			}
 
@@ -169,11 +151,6 @@ jQuery(function ($) {
 			} else {
 				this.todos[this.indexFromEl(el)].title = val;
 			}
-
-			this.render();
-		},
-		destroy: function (e) {
-			this.todos.splice(this.indexFromEl(e.target), 1);
 			this.render();
 		}
 	};
@@ -190,6 +167,30 @@ jQuery(function ($) {
 		App.todos.forEach(function (todo) {
 			todo.completed = isChecked;
 		});
+
+		App.render();
+	}
+
+	function destroy(e) {
+		App.todos.splice(App.indexFromEl(e.target), 1);
+		App.render();
+	}
+
+	function create(e) {
+		var $input = $(e.target);
+		var val = $input.val().trim();
+
+		if (e.which !== ENTER_KEY || !val) {
+			return;
+		}
+
+		App.todos.push({
+			id: util.uuid(),
+			title: val,
+			completed: false
+		});
+
+		$input.val('');
 
 		App.render();
 	}
