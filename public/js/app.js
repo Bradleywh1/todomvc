@@ -64,17 +64,17 @@ jQuery(function ($) {
 				.on('click', '.destroy', destroy.bind(this));
 		},
 		render: function () {
-			var todos = this.getFilteredTodos();
+			var todos = getFilteredTodos();
 			$('#todo-list').html(this.todoTemplate(todos));
 			$('#main').toggle(todos.length > 0);
-			$('#toggle-all').prop('checked', this.getActiveTodos().length === 0);
+			$('#toggle-all').prop('checked', getActiveTodos().length === 0);
 			this.renderFooter();
 			$('#new-todo').focus();
 			util.store('todos-jquery', this.todos);
 		},
 		renderFooter: function () {
 			var todoCount = this.todos.length;
-			var activeTodoCount = this.getActiveTodos().length;
+			var activeTodoCount = getActiveTodos().length;
 			var template = this.footerTemplate({
 				activeTodoCount: activeTodoCount,
 				activeTodoWord: util.pluralize(activeTodoCount, 'item'),
@@ -83,27 +83,6 @@ jQuery(function ($) {
 			});
 
 			$('#footer').toggle(todoCount > 0).html(template);
-		},
-		getActiveTodos: function () {
-			return this.todos.filter(function (todo) {
-				return !todo.completed;
-			});
-		},
-		getCompletedTodos: function () {
-			return this.todos.filter(function (todo) {
-				return todo.completed;
-			});
-		},
-		getFilteredTodos: function () {
-			if (this.filter === 'active') {
-				return this.getActiveTodos();
-			}
-
-			if (this.filter === 'completed') {
-				return this.getCompletedTodos();
-			}
-
-			return this.todos;
 		}
 	};
 
@@ -180,25 +159,49 @@ jQuery(function ($) {
 			}
 		}
 
-			// accepts an element from inside the `.item` div and
-		// returns the corresponding index in the `todos` array
-		function indexFromEl(el) {
-			var id = $(el).closest('li').data('id');
-			var todos = App.todos;
-			var i = todos.length;
+	// accepts an element from inside the `.item` div and
+	// returns the corresponding index in the `todos` array
+	function indexFromEl(el) {
+		var id = $(el).closest('li').data('id');
+		var todos = App.todos;
+		var i = todos.length;
 
-			while (i--) {
-				if (todos[i].id === id) {
-					return i;
-				}
+		while (i--) {
+			if (todos[i].id === id) {
+				return i;
 			}
 		}
+	}
 
-		function destroyCompleted() {
-			App.todos = App.getActiveTodos();
-			App.filter = 'all';
-			App.render();
+	function destroyCompleted() {
+		App.todos = getActiveTodos();
+		App.filter = 'all';
+		App.render();
+	}
+
+	function getFilteredTodos() {
+		if (App.filter === 'active') {
+			return getActiveTodos();
 		}
+
+		if (App.filter === 'completed') {
+			return getCompletedTodos();
+		}
+
+		return App.todos;
+	}
+
+	function getCompletedTodos() {
+		return App.todos.filter(function (todo) {
+			return todo.completed;
+		});
+	}
+
+	function getActiveTodos() {
+		return App.todos.filter(function (todo) {
+			return !todo.completed;
+		});
+	}
 
 	App.init();
 });
