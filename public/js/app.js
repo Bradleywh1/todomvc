@@ -58,9 +58,9 @@ jQuery(function ($) {
 			$('#footer').on('click', '#clear-completed', this.destroyCompleted.bind(this));
 			$('#todo-list')
 				.on('change', '.toggle', toggle.bind(this))
-				.on('dblclick', 'label', this.edit.bind(this))
-				.on('keyup', '.edit', this.editKeyup.bind(this))
-				.on('focusout', '.edit', this.update.bind(this))
+				.on('dblclick', 'label', edit.bind(this))
+				.on('keyup', '.edit', editKeyup.bind(this))
+				.on('focusout', '.edit', update.bind(this))
 				.on('click', '.destroy', destroy.bind(this));
 		},
 		render: function () {
@@ -122,36 +122,6 @@ jQuery(function ($) {
 					return i;
 				}
 			}
-		},
-		edit: function (e) {
-			var $input = $(e.target).closest('li').addClass('editing').find('.edit');
-			$input.val($input.val()).focus();
-		},
-		editKeyup: function (e) {
-			if (e.which === ENTER_KEY) {
-				e.target.blur();
-			}
-
-			if (e.which === ESCAPE_KEY) {
-				$(e.target).data('abort', true).blur();
-			}
-		},
-		update: function (e) {
-			var el = e.target;
-			var $el = $(el);
-			var val = $el.val().trim();
-
-			if (!val) {
-				destroy(e);
-				return;
-			}
-
-			if ($el.data('abort')) {
-				$el.data('abort', false);
-			} else {
-				this.todos[this.indexFromEl(el)].title = val;
-			}
-			this.render();
 		}
 	};
 
@@ -194,6 +164,39 @@ jQuery(function ($) {
 
 		App.render();
 	}
+
+	function update(e) {
+		var el = e.target;
+		var $el = $(el);
+		var val = $el.val().trim();
+
+		if (!val) {
+			destroy(e);
+			return;
+		}
+
+		if ($el.data('abort')) {
+			$el.data('abort', false);
+		} else {
+			App.todos[App.indexFromEl(el)].title = val;
+		}
+		App.render();
+	}
+
+	function edit(e) {
+		var $input = $(e.target).closest('li').addClass('editing').find('.edit');
+		$input.val($input.val()).focus();
+	}
+
+	function editKeyup(e) {
+			if (e.which === ENTER_KEY) {
+				e.target.blur();
+			}
+
+			if (e.which === ESCAPE_KEY) {
+				$(e.target).data('abort', true).blur();
+			}
+		}
 
 	App.init();
 });
