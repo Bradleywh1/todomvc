@@ -24,11 +24,12 @@ jQuery(function ($) {
 			}
 
 			return uuid;
-		},
-		pluralize: function (count, word) {
-			return count === 1 ? word : word + 's';
-		},
+		}
 	};
+
+	function pluralize(count, word) {
+			return count === 1 ? word : word + 's';
+		}
 
 	function store(namespace, data) {
 		if (arguments.length > 1) {
@@ -189,7 +190,7 @@ jQuery(function ($) {
 		var activeTodoCount = getActiveTodos().length;
 		var template = App.footerTemplate({
 			activeTodoCount: activeTodoCount,
-			activeTodoWord: util.pluralize(activeTodoCount, 'item'),
+			activeTodoWord: pluralize(activeTodoCount, 'item'),
 			completedTodos: todoCount - activeTodoCount,
 			filter: App.filter
 		});
